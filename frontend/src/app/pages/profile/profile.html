@@ -1,0 +1,25 @@
+<div class="profile">
+    <div class="profile__avatar">
+        <img loading="lazy" [src]="user.avatar" alt="avatar_user">
+    </div>
+
+    <div class="profile__info">
+        <h2>{{ user.firstName + ' ' + user.lastName }}</h2>
+        <p>&#64;{{ user.username }}</p>
+        <p>{{ user.bio }}</p>
+
+        <p>{{ user.dateOfBirth | date: 'dd-MM-yyyy' }}</p>
+        <p>{{ user.phone }}</p>
+    </div>
+    <div class="profile__properties">
+        <p>
+            <i class="fa-solid fa-user-plus"></i>
+            {{ user.friends.length }} friends
+        </p>
+        <i class="fa-solid fa-circle"></i>
+        <p>
+            <i class="fa-solid fa-user-minus"></i>
+            {{ user.blockedUsers.length}} blocked
+        </p>
+    </div>
+</div>

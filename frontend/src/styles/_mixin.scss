@@ -1,0 +1,8 @@
+@mixin box {
+    margin: 20px;
+    background: var(--bg-primary);
+    padding: 10px 20px;
+    border-radius: 16px;
+    box-shadow: var(--box-shadow);
+    height: calc(100vh - 40px);
+}

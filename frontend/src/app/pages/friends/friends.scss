@@ -1,0 +1,240 @@
+@use "variables" as *;
+
+@mixin box {
+  background-color: var(--bg-primary);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 20px;
+}
+
+@mixin btn {
+  background-color: var(--bg-primary);
+  color: #000;
+  border: 1px solid #ccc;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s all;
+
+  &:hover {
+    background-color: var(--bg-primary);
+    filter: brightness(1.3);
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.btn {
+  @include btn;
+}
+
+.friend-btn {
+  @include btn;
+  background-color: $primary-color;
+  color: var(--bg-primary);
+
+  &:hover {
+    background-color: var(--bg-primary);
+    filter: brightness(1.1); // Tương đương lighten 30%
+  }
+}
+
+.delete {
+  color: $danger-color;
+}
+
+.form {
+  &__search {
+    flex: 1;
+    background: var(--bg-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid $border-input;
+      border-radius: 4px;
+      font-size: 16px;
+      background-color: transparent;
+      border: 1px solid $border-input;
+      outline: none;
+
+      &:focus {
+        border-color: $border-input-focus;
+        outline: none;
+      }
+    }
+    i {
+      color: $primary-color;
+      font-size: 20px;
+    }
+  }
+
+  &__filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    select {
+      padding: 10px;
+      border-radius: 4px;
+      background-color: transparent;
+      font-size: 16px;
+      outline: none;
+
+      &:focus {
+        border-color: $border-input-focus;
+        outline: none;
+      }
+    }
+  }
+}
+
+.friends {
+  margin: 0 25px;
+  .form {
+    @include box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+    margin-bottom: 20px;
+  }
+
+  &__main {
+    @include box;
+
+    .group-btn {
+      margin-bottom: 10px;
+
+      &__all-friends,
+      &__friend-requests,
+      &__friend-rcm {
+        margin-right: 10px;
+        margin-bottom: 10px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  &__length h1 {
+    font-size: 20px;
+    color: #000;
+    margin-bottom: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 10px 0;
+    margin-bottom: 10px;
+  }
+
+  &__list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+
+    &-item {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .user {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+
+      .status {
+        position: relative;
+      }
+
+      span {
+        font-size: 18px;
+        color: #000;
+      }
+    }
+
+    .options-wrapper {
+      position: relative;
+
+      .options {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: var(--bg-primary);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        list-style: none;
+        padding: 10px;
+        margin: 0;
+        width: 220px;
+        display: none;
+
+        &.show {
+          display: block;
+        }
+
+        li {
+          padding: 10px;
+          cursor: pointer;
+          width: 100%;
+
+          &:hover {
+            background-color: #f0f0f0;
+          }
+
+          button {
+            text-decoration: none;
+            color: $primary-color;
+            display: flex;
+            justify-content: start;
+            outline: none;
+            border: none;
+            background-color: transparent;
+
+            &.delete {
+              color: $danger-color;
+            }
+          }
+        }
+      }
+    }
+
+    .options-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: $primary-color;
+      font-size: 20px;
+      border-radius: 8px;
+
+      i {
+        padding: 10px 20px;
+      }
+
+      &:hover {
+        background-color: #f0f0f0;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .friends {
+    margin: 20px 20px 20px 130px;
+  }
+}

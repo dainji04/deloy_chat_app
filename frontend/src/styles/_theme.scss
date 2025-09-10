@@ -1,0 +1,89 @@
+// Light mode theme variables
+$light-primary-color: #24786d;
+$light-bg-primary: #fff;
+$light-bg-secondary: #f5f5f5;
+$light-bg-tertiary: #e9ecef;
+$light-text-primary: #000000;
+$light-text-secondary: #6c757d;
+$light-text-muted: #adb5bd;
+$light-border: #dee2e6;
+$light-accent: #007acc;
+$light-success: #28a745;
+$light-warning: #ffc107;
+$light-error: #dc3545;
+$light-overlay: rgba(0, 0, 0, 0.5);
+
+// Dark mode theme variables
+$dark-primary-color: #24786d;
+$dark-bg-primary: #1f1f1f;
+$dark-bg-secondary: #2d2d2d;
+$dark-bg-tertiary: #3a3a3a;
+$dark-text-primary: #ffffff;
+$dark-text-secondary: #b3b3b3;
+$dark-text-muted: #666666;
+$dark-border: #404040;
+$dark-accent: #007acc;
+$dark-success: #28a745;
+$dark-warning: #ffc107;
+$dark-error: #dc3545;
+$dark-overlay: rgba(0, 0, 0, 0.7);
+
+// Light mode mixins
+@mixin light-mode {
+  background-color: $light-bg-primary;
+  color: $light-text-primary;
+}
+
+@mixin light-input {
+  background-color: $light-bg-tertiary;
+  border: 1px solid $light-border;
+  color: $light-text-primary;
+
+  &::placeholder {
+    color: $light-text-muted;
+  }
+}
+
+// Dark mode mixins
+@mixin dark-mode {
+  background-color: $dark-bg-primary;
+  color: $dark-text-primary;
+}
+
+@mixin dark-input {
+  background-color: $dark-bg-tertiary;
+  border: 1px solid $dark-border;
+  color: $dark-text-primary;
+
+  &::placeholder {
+    color: $dark-text-muted;
+  }
+}
+
+// Light mode class
+.light-theme {
+  @include light-mode;
+
+  input,
+  textarea {
+    @include light-input;
+  }
+}
+
+// Dark mode class
+.dark-theme {
+  @include dark-mode;
+}
+
+// Smooth transitions for theme changes
+body,
+.card,
+.message-card,
+input,
+textarea,
+.btn,
+.navbar,
+.sidebar {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}

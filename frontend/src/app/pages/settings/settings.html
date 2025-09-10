@@ -1,0 +1,172 @@
+<div class="settings">
+    <div class="change-info__head">
+        <h2 class="change-info__title">Change User Information</h2>
+        <p class="change-info__description">Manage your account settings and preferences.</p>
+        <ul class="menu">
+            <li><a (click)="scrollTo('change-avatar')">1. change avatar</a></li>
+            <li><a (click)="scrollTo('change-info')">2. change basics information</a></li>
+            <li><a (click)="scrollTo('change-password')">3. change password</a></li>
+            <li><a (click)="scrollTo('reset-password')">4. reset password</a></li>
+        </ul>
+    </div>
+
+
+    <div id="change-avatar" class="change-avatar">
+        <h1 class="change-info__title">Change Avatar</h1>
+        <p class="change-info__description">Update your profile picture.</p>
+
+        @if (errorAvatar) {
+            <div class="alert alert-error">
+                {{ errorAvatar }}
+            </div>
+        }
+
+        <div class="avatar-box">
+            <img loading="lazy" [src]="user?.avatar || 'assets/default-avatar.png'" alt="User Avatar" class="avatar__image">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" class="avatar__input">
+        </div>
+        <div class="upload-btn">
+            <button (click)="onUpload()" [disabled]="!selectedFile || uploading" class="avatar__button primary-btn">
+                {{uploading ? 'uploading...' : 'Upload Avatar'}}
+            </button>
+        </div>
+    </div>
+
+    <div id="change-info" class=" change-info__basic">
+        <h1 class="change-info__title">Basic Information</h1>
+        <p>Manage your basic information: username, first name, last name, and bio.</p>
+
+        @if (errorInfo) {
+            <div class="alert alert-error">
+                {{ errorInfo }}
+            </div>
+        }
+        <form [formGroup]="formData" (ngSubmit)="onSubmit()" class="form change-info__form">
+            <div class="change-info__form-group">
+                <label for="username">Username:</label>
+                <input formControlName="username" type="text" id="username" name="username" [value]="user?.username">
+
+                <app-show-error-validate [inputField]="formData.get('username')"
+                    [fieldName]="'Username'" [minLength]="5" [maxLength]="10">
+                </app-show-error-validate>
+            </div>
+
+            <div class="change-info__form-group">
+                <label for="firstName">First Name:</label>
+                <input formControlName="firstName" type="text" id="firstName" name="firstName" [value]="user?.firstName"
+                    required minlength="2" maxlength="20">
+
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formData.get('firstName')"
+                    [fieldName]="'First name'" [minLength]="2" [maxLength]="10">
+                </app-show-error-validate>
+            </div>
+
+            <div class="change-info__form-group">
+                <label for="lastName">Last Name:</label>
+                <input formControlName="lastName" type="text" id="lastName" name="lastName" [value]="user?.lastName"
+                    required minlength="2" maxlength="10">
+
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formData.get('lastName')"
+                    [fieldName]="'Last name'" [minLength]="2" [maxLength]="10">
+                </app-show-error-validate>
+            </div>
+
+            <div class="change-info__form-group">
+                <label for="phone">Phone Number:</label>
+                <input formControlName="phone" type="text" id="phone" name="phone" [value]="user?.phone"
+                    minlength="10" maxlength="10" placeholder=" Enter your phone number" autocomplete="off">
+
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formData.get('phone')"[fieldName]="'Phone number'"></app-show-error-validate>
+            </div>
+
+            <div class="change-info__form-group">
+                <label for="dateOfBirth">Date of Birth:</label>
+                <input formControlName="dateOfBirth" type="date" id="dateOfBirth" name="dateOfBirth"
+                    [value]="user?.dateOfBirth">
+
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formData.get('dateOfBirth')"[fieldName]="'Date of birth'"></app-show-error-validate>
+            </div>
+
+            <div class="change-info__form-group">
+                <label for="bio">Bio:</label>
+                <textarea formControlName="bio" id="bio" name="bio" rows="4" [value]="user?.bio"
+                    maxlength="200"></textarea>
+
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formData.get('bio')"
+                    [fieldName]="'Bio'" [maxLength]="200">
+                </app-show-error-validate>
+            </div>
+
+            <div class="button">
+                <button class="primary-btn" type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="change-password" class="change-password">
+        <h1 class="change-info__title">Change Password</h1>
+        <p class="change-info__description">Update your account password for better security.</p>
+
+        <form (submit)="onChangePassword()" [formGroup]="formChangePassword" class="change-info__form">
+            <div class="change-info__form-group">
+                <label for="currentPassword">Current Password:</label>
+                <input type="password" formControlName="oldPassword" id="currentPassword" name="currentPassword"
+                    required>
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formChangePassword.get('oldPassword')"
+                    [fieldName]="'Old password'" [minLength]="6">
+                </app-show-error-validate>
+            </div>
+
+            <div class="change-info__form-group">
+                <label for="newPassword">New Password:</label>
+                <input type="password" formControlName="newPassword" id="newPassword" name="newPassword" required
+                    minlength="6">
+
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formChangePassword.get('newPassword')"
+                    [fieldName]="'New password'" [minLength]="6">
+                </app-show-error-validate>
+            </div>
+
+            <div class="change-info__form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" formControlName="confirmPassword" id="confirmPassword" name="confirmPassword"
+                    required>
+
+                <!-- show errors -->
+                <app-show-error-validate [inputField]="formChangePassword.get('confirmPassword')"
+                    [fieldName]="'Confirm password'" [minLength]="6">
+                </app-show-error-validate>
+                @if (errorConfirmPassword) {
+                    <p class="alert alert-warning">
+                        Passwords do not match.
+                    </p>
+                }
+            </div>
+
+            <div class=" button">
+                <button class="primary-btn" type="submit">Change Password</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="reset-password" class="reset-password">
+        <h1 class="change-info__title">Forgot Password</h1>
+        <p class="change-info__description">You forgot the password? click button below.</p>
+
+        <div class="change-info__form">
+            <div class="button">
+                <button class="primary-btn" (click)="forgotPassword()" type="button">{{isSendingEmail ? 'Sending...' :
+                    'Send link to reset password'}}</button>
+            </div>
+        </div>
+    </div>
+
+
+</div>

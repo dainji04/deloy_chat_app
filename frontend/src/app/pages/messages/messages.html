@@ -1,0 +1,97 @@
+<div class="container">
+    <div #message class="messages">
+        <div class="messages__header">
+            <div class="circle" (click)="showCreateOptions()" (appClickOutside)="isShowCreateOptions = false">
+                <i class="fa-solid fa-plus cursor"></i>
+                <ul [ngClass]="{'show': isShowCreateOptions}" class="create__options options">
+                    <li class="cursor" (click)="showCreateGroupBox()">
+                        <p>create a group chat</p>
+                    </li>
+                </ul>
+            </div>
+            <ul class="messages__header-search">
+                <!-- search component -->
+                <app-search-user (chatSelected)="setChat($event)"></app-search-user>
+            </ul>
+        </div>
+        <ul class="messages__list">
+            @for (message of messages; track message._id) {
+                <li>
+                    <button [ngClass]="{'selected': selectedMessageId === message._id}" 
+                        class="messages__item" (click)="selectMessage(message)">
+                        <div style="position: relative; z-index: 1">
+                            <img loading="lazy" [src]="message.avatar" alt="avatar" class="messages__item-avatar">
+                            @if(message.type !== 'group') {
+                                <i [ngClass]="{'online': message?.isOnline, 'offline': !message?.isOnline}"
+                                     class="dot fa-solid fa-circle"></i>
+                            }
+                        </div>
+                        <div class="messages__item-content">
+                            <h3 class="messages__item-sender">{{ message.name }}</h3>
+                            <p class="messages__item-text">
+                                {{ message.lastMessage ? message.lastMessage.content.text : 'No message' }}
+                            </p>
+                        </div>
+                        <div class="messages__item-time">{{ message?.lastMessage?.createdAt | date: 'hh:mm a' }}</div>
+                    </button>
+                </li>
+            } @empty {
+                <li class="messages__empty">
+                    <h3>No conversations yet</h3>
+                </li>
+            }
+        </ul>
+    </div>
+    <div #detail class="messages__detail">
+        <app-detail-message [id]="selectedMessageId" (closeDetail)="closeDetail()" [conversation]="detailConversation" (loadGroupEvent)="fetchMessages()">
+        </app-detail-message>
+    </div>
+</div>
+
+<!-- create group box -->
+@if(isShowCreateGroupBox) {
+    <div class="overlay" (click)="isShowCreateGroupBox=false">
+        <div class="create-group"  (click)="$event.stopPropagation()">
+            <div class="create-group__header">
+                <h1>Create group</h1>
+                <div (click)="isShowCreateGroupBox=false" class="close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+            </div>
+            <div class="create-group__body">
+                <div class="info-group">
+                    <div class="info-group__upload-avatar">
+                        <label for="avatar">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
+                        <input hidden (change)="onFileSelected($event)" type="file" name="avatar" id="avatar">
+                    </div>
+                    <div class="info-group__name">
+                        <input type="text" name="nameGroup" id="name-group" placeholder="Type group name" [(ngModel)]="formGroupChat.name">
+                    </div>
+                </div>
+                <ul class="member">
+                    @for (friend of listFriends; track friend._id; let idx = $index) {
+                        <li>
+                            <input type="checkbox" name="addMember" [id]="'addMember' + idx" 
+                                [checked]="formGroupChat.participantIds.includes(friend._id)"
+                                (change)="toggleMember(friend._id, $event)">
+                            <label [for]="'addMember' + idx" class="user">
+                                <img loading="lazy" [src]="friend?.avatar" alt="avatar user" class="user-avatar">
+                                <h3 class="user-name">{{friend?.firstName}} {{friend?.lastName}}</h3>
+                            </label>
+                        </li>
+                    } @empty {
+                        <div>
+                            <p><i class="pi pi-spin pi-spinner-dotted"></i>Loading friends</p>
+                        </div>
+                    }
+                </ul>
+            </div>
+            <div class="create-group__footer">
+                <button class="cancel btn" (click)="isShowCreateGroupBox=false">Cancel</button>
+                <button class="create btn" (click)="createGroup()">{{isCreatingGroup ? 'Creating...' : 'Create'}}</button>
+            </div>
+        </div>
+    </div>
+}

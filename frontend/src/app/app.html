@@ -1,0 +1,6 @@
+<router-outlet></router-outlet>
+<app-toast></app-toast>
+
+@if(isHaveAnIncomingCall) {
+  <app-incoming-call [data]="dataIncomingCall" (rejectCall)="isHaveAnIncomingCall = false"></app-incoming-call>
+}

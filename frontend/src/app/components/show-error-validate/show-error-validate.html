@@ -1,0 +1,16 @@
+<!-- show errors -->
+@if (inputField?.invalid && (inputField?.dirty || inputField?.touched)) {
+    <div class="alert alert-warning">
+        @if (inputField?.errors?.['required']) {
+            <p>{{fieldName}} is required.</p>
+        } @else if (inputField?.errors?.['minlength']) {
+            <p>{{fieldName}} must be at least {{minLength}} characters long.</p>
+        } @else if (inputField?.errors?.['maxlength']) {
+            <p>{{fieldName}} cannot be more than {{ maxLength }} characters long.</p>
+        } @else if (inputField?.errors?.['pattern']) {
+            <p>{{fieldName}} can only contain numbers and must be exactly 10 digits long.</p>
+        } @else if (inputField?.errors?.['email']) {
+            <p>Please enter a valid email address.</p>
+        }
+    </div>
+}

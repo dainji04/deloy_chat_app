@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+@use "variables";
+@use "reset";
+@use "global";
+@use "theme";
+@use "utilities";
+
+// primeng
+@import "primeicons/primeicons.css";
+
+:root {
+  --background-auth: url("assets/images/background_auth.jpg");
+}

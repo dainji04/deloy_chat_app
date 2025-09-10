@@ -1,0 +1,64 @@
+<div class="incoming-call-overlay">
+  <div class="call-container">
+    <!-- Background blur effect -->
+    <div class="blur-background"></div>
+    
+    <!-- Call content -->
+    <div class="call-content">
+      <!-- Caller avatar with pulse animation -->
+      <div class="caller-avatar-container">
+        <img 
+          [src]="data.user.avatar" 
+          alt="Caller Name"
+          class="caller-avatar"
+        >
+        <div class="avatar-ring"></div>
+        <div class="avatar-ring-2"></div>
+      </div>
+
+      <!-- Caller info -->
+      <div class="caller-info">
+        <h2 class="caller-name">{{ data.user.firstName }} {{ data.user.lastName }}</h2>
+        <p class="call-type">
+          <i class="fas fa-video"></i>
+          Incoming video call
+        </p>
+        <div class="call-timer">
+          <i class="fas fa-clock"></i>
+          0:28
+        </div>
+      </div>
+
+      <!-- Call actions -->
+      <div class="call-actions">
+        <!-- Reject button -->
+        <button class="action-btn reject-btn" (click)="reject()" title="Reject call">
+          <i class="fas fa-phone-slash"></i>
+          <div class="ripple-effect"></div>
+        </button>
+
+        <!-- Accept button -->
+        <button [routerLink]="['/video-call', data.roomId]" class="action-btn accept-btn" title="Accept call">
+          <i class="fas fa-video"></i>
+          <div class="ripple-effect"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Decorative elements -->
+    <div class="floating-particles">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+  </div>
+
+  <!-- Background pattern -->
+  <div class="background-pattern">
+    <div class="pattern-circle"></div>
+    <div class="pattern-circle"></div>
+    <div class="pattern-circle"></div>
+  </div>
+</div>

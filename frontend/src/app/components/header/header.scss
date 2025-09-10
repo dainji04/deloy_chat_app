@@ -1,0 +1,294 @@
+@use "variables" as *;
+
+@mixin logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header {
+  &__desktop {
+    display: none;
+  }
+  &__mobile {
+    display: block;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-primary);
+    z-index: 100;
+  }
+
+  &__nav {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &-list {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+    }
+
+    &-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .profile {
+        position: relative;
+        &__menu {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background-color: var(--bg-primary);
+          box-shadow: 0 -4px 32px #0003;
+          border-radius: 8px;
+          z-index: 100;
+          border: 1px solid var(--bg-secondary);
+          padding: 10px 50px;
+          margin-top: 10px;
+          animation: fadeIn 0.2s ease forwards;
+
+          &-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: #f0f0f0;
+            }
+          }
+
+          & ul {
+            list-style: none;
+            margin-top: 20px;
+
+            li {
+              padding: 10px 0;
+              cursor: pointer;
+              transition: background-color 0.3s ease;
+
+              &:hover > a {
+                color: $primary-color;
+              }
+
+              a {
+                color: #000;
+                text-decoration: none;
+                opacity: 0.7;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+        &__user-info {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 20px;
+
+          div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+          }
+        }
+        &__user-fullname {
+          font-size: 16px;
+          font-weight: 700;
+          color: $primary-color;
+          margin-right: 10px;
+        }
+
+        &__username {
+          font-size: 16px;
+          font-weight: 500;
+          opacity: 0.6;
+        }
+      }
+    }
+
+    &-logo {
+      @include logo;
+      & a {
+        color: $primary-color;
+        font-family: $secondary-font;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .header {
+    &__desktop {
+      display: block;
+      // lỗi index do 2 dom khác nhau
+      position: relative;
+      z-index: 2;
+    }
+
+    &__mobile {
+      display: none;
+    }
+
+    &__sidebar {
+      &--left {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background-color: transparent;
+        // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      &-logo {
+        @include logo;
+        font-size: 18px;
+        padding: 20px 0;
+        & a {
+          color: $primary-color;
+          font-family: $secondary-font;
+          text-decoration: none;
+        }
+      }
+
+      &-menu {
+        flex: 1;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      &-item {
+        &.settings {
+          position: relative;
+
+          button {
+            border: none;
+            outline: none;
+            background: none;
+          }
+        }
+
+        .setting {
+          &__options {
+            position: absolute;
+            left: 20px;
+            bottom: 100%;
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px 40px;
+
+            .user {
+              &-info {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 15px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #ccc;
+              }
+
+              &-fullname {
+                white-space: nowrap;
+              }
+            }
+
+            &-list {
+              margin-top: 20px;
+              display: grid;
+            }
+
+            &-link {
+              display: flex;
+              align-items: center;
+              gap: 20px;
+              color: #000;
+              font-size: 18px;
+              padding: 10px 0;
+
+              &:hover {
+                color: $primary-color;
+                background-color: var(--bg-secondary);
+              }
+
+              i {
+                font-size: 20px;
+              }
+            }
+          }
+        }
+      }
+
+      &-link {
+        cursor: pointer;
+        padding: 5px 10px;
+        text-decoration: none;
+        opacity: 0.7;
+        font-weight: 500;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        gap: 10px;
+        border-radius: 8px;
+
+        i {
+          font-size: 20px;
+          color: var(--text-primary);
+        }
+
+        p {
+          font-size: 16px;
+          color: var(--text-primary);
+          margin-top: 5px;
+        }
+
+        &:hover {
+          background-color: #cccccc8f;
+        }
+
+        &.active > i,
+        &.active > p {
+          color: $primary-color !important;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .header {
+    &__desktop {
+      display: block;
+    }
+    &__mobile {
+      display: none;
+    }
+
+    // &__sidebar {
+    //   // &-item {
+    //   //   padding: 10px 20px;
+    //   // }
+    // }
+  }
+}

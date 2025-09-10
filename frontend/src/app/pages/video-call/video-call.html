@@ -1,0 +1,75 @@
+<div class="video-call-container">
+  <div class="video-grid">
+    <!-- Remote video (main view) -->
+    <div class="remote-video-container">
+      <video #remoteVideo autoplay playsinline class="remote-video"></video>
+      <div class="remote-video-placeholder" *ngIf="!isCallActive">
+        <div class="placeholder-content">
+          <p>Waiting for other participant...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Local video (picture-in-picture) -->
+    <div class="local-video-container">
+      <video #localVideo autoplay muted playsinline class="local-video"></video>
+    </div>
+  </div>
+
+  <!-- Call controls -->
+  <div class="call-controls">
+    <!-- <button 
+      class="control-btn start-btn" 
+      (click)="startCall()" 
+      *ngIf="!isCallActive && !isConnecting"
+      type="button">
+      <span>📹</span>
+      Start Call
+    </button>
+
+    <button 
+      class="control-btn connecting-btn" 
+      *ngIf="isConnecting"
+      disabled
+      type="button">
+      <span>⏳</span>
+      Connecting...
+    </button> -->
+
+    <!-- Media controls when call is active -->
+    <ng-container *ngIf="isCallActive">
+      <button 
+        class="control-btn media-btn"
+        [class.disabled]="!isVideoEnabled"
+        (click)="toggleVideo()"
+        type="button">
+        <span>{{ isVideoEnabled ? '📹' : '📴' }}</span>
+        {{ isVideoEnabled ? 'Video On' : 'Video Off' }}
+      </button>
+
+      <button 
+        class="control-btn media-btn"
+        [class.disabled]="!isAudioEnabled"
+        (click)="toggleAudio()"
+        type="button">
+        <span>{{ isAudioEnabled ? '🎤' : '🔇' }}</span>
+        {{ isAudioEnabled ? 'Mic On' : 'Mic Off' }}
+      </button>
+
+      <button 
+        class="control-btn stop-btn" 
+        (click)="stopCall()" 
+        type="button">
+        <span>📴</span>
+        End Call
+      </button>
+    </ng-container>
+  </div>
+
+  <!-- Call info -->
+  <div class="call-info" *ngIf="isCallActive">
+    <p class="room-id">Room: {{ id }}</p>
+    <p class="user-info">{{ currentUser?.username || 'Unknown User' }}</p>
+    <p class="connection-status">{{ getConnectionStatus() }}</p>
+  </div>
+</div>

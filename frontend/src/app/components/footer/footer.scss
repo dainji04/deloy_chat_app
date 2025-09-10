@@ -1,0 +1,39 @@
+.footer {
+  &__mobile {
+    background-color: var(--bg-primary);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+
+  &__nav {
+    padding: 10px 40px;
+    &-list {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &-link {
+      text-decoration: none;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 10px;
+
+      & i {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .footer {
+    &__mobile {
+      display: none;
+    }
+  }
+}

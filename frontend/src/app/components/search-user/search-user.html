@@ -1,0 +1,51 @@
+<li (appClickOutside)="isShowSearchResult = false">
+	<form [formGroup]="searchForm" class="header__search-form" (ngSubmit)="onSearchInput()">
+		<div class="header__search">
+			<i (click)="toggleSearch()" class="fa-solid fa-magnifying-glass"></i>
+			<div class="header__search-box" [class]="{'isSearching': isShowSearchResult}">
+				<input class="header__search-input" formControlName="email" (click)="isShowSearchResult=true" type="text"
+					placeholder="type email">
+			</div>
+		</div>
+		@if (isShowSearchResult) {
+			<div class="result__search">
+				@if (isLoadingSearch) {
+					<div>
+						<span>
+							<i class="pi pi-spin pi-spinner"></i>
+							Loading...
+						</span>
+					</div>
+				} @else if (isShowSearchResult && resultUser != null) {
+					<a class="result__search-link">
+						<img loading="lazy" [src]="resultUser?.avatar" alt="{{ resultUser?.username }} avatar" class="avatar">
+						<span>{{ resultUser?.firstName + ' ' + resultUser?.lastName }}</span>
+					</a>
+					<div class="button__state">
+						@if (isOwnProfile()) {
+							<button class="primary-btn" (click)="isShowSearchResult=false" routerLinkActive="active" routerLink="/profile">
+								view
+							</button>
+						}
+						@else if (isFriend()) {
+							<button (click)="getOrCreateConversation()" class="primary-btn">
+								chat
+							</button>
+						} @else {
+							<button (click)="addFriend()" class="primary-btn">
+								add
+							</button>
+						}
+					</div>
+				} @else if (isShowSearchResult && resultUser == null) {
+					<div>
+						<span>
+							<i class="pi pi-inbox"></i>
+							No user found
+						</span>
+					</div>
+				}
+			</div>
+		}
+	</form>
+</li>

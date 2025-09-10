@@ -1,0 +1,121 @@
+<!-- mobile header -->
+<header class="header__mobile">
+    <nav class="header__nav">
+        <ul class="header__nav-list">
+            <li class="header__nav-item">
+                <h1 class="header__nav-logo">
+                    <a routerLinkActive="active" routerLink="/">
+                        Dainji
+                    </a>
+                </h1>
+            </li>
+            <app-search-user></app-search-user>
+            <li class="header__nav-item profile" (appClickOutside)="isProfile = false">
+                <img loading="lazy" (click)="toggleProfile()" [src]="user.avatar" [alt]="user.username + ' avatar'" class="avatar">
+                <!-- Profile Menu -->
+                @if (isProfile) {
+                    <div class="profile__menu">
+                        <div class="profile__user-info">
+                            <img loading="lazy" [src]="user.avatar" class="avatar" alt="avatar_user">
+                            <div>
+                                <h3 class="profile__user-fullname">{{ user.firstName + ' ' + user.lastName }}</h3>
+                                <p class="profile__username">&#64;{{ user.username }}</p>
+                            </div>
+                        </div>
+                        <ul>
+                            <li>
+                                <a (click)="toggleProfile()" routerLinkActive="active" routerLink="/profile">
+                                    Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a (click)="toggleProfile()" routerLinkActive="active" routerLink="/settings">
+                                    Settings
+                                </a>
+                            </li>
+                            <li>
+                                <a (click)="logout()">
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- desktop, tablet header -->
+<header class="header__desktop">
+    <div class="header__sidebar">
+        <div class="header__sidebar--left">
+            <h1 class="header__sidebar-logo">
+                <a routerLinkActive="active" routerLink="/">
+                    Dainji
+                </a>
+            </h1>
+            <ul class="header__sidebar-menu">
+                <li class="header__sidebar-item">
+                    <a class="header__sidebar-link" routerLinkActive="active" routerLink="/messages">
+                        <i class="fa-solid fa-comments"></i>
+                        <p>Messages</p>
+                    </a>
+                </li>
+                <li class="header__sidebar-item">
+                    <a class="header__sidebar-link" routerLinkActive="active" routerLink="friends">
+                        <i class="fa-solid fa-user-group"></i>
+                        <p>Friends</p>
+                    </a>
+                </li>
+            </ul>
+            <p-button (click)="toggleTheme()" class="header__sidebar-link">
+                @if (theme === 'light') {
+                    <i class="pi pi-sun"></i>
+                    <p>light</p>
+                } @else {
+                    <i class="pi pi-moon"></i>
+                    <p>dark</p>
+                }
+            </p-button>
+            <div class="header__sidebar-item settings" (appClickOutside)="isProfileDesktop = false">
+                <button (click)="isProfileDesktop = !isProfileDesktop" class="header__sidebar-link">
+                    <i class="fa-solid fa-gear"></i>
+                    <p>Settings</p>
+                </button>
+                <!-- Profile Menu -->
+                @if (isProfileDesktop) {
+                    <div class="setting__options">
+                        <div class="user-info">
+                            <img loading="lazy" [src]="user.avatar" class="avatar" alt="avatar_user">
+                            <div>
+                                <h3 class="user-fullname">{{ user.firstName + ' ' + user.lastName }}</h3>
+                                <p class="profile__username">&#64;{{ user.username }}</p>
+                            </div>
+                        </div>
+                        <ul class="setting__options-list">
+                            <li class="setting__options-item">
+                                <a (click)="toggleProfile()" class="setting__options-link" routerLinkActive="active" routerLink="/profile">
+                                    <i class="fa-solid fa-circle-user"></i>
+                                    <p>Profile</p>
+                                </a>
+                            </li>
+                            <li class="setting__options-item">
+                                <a (click)="toggleProfile()" class="setting__options-link" routerLinkActive="active" routerLink="/settings">
+                                    <i class="fa-solid fa-gear"></i>
+                                    <p>Settings</p>
+                                </a>
+                            </li>
+                            <li class="setting__options-item">
+                                <a (click)="logout()"  href="#"  class="setting__options-link">
+                                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                    <p>Logout</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</header>

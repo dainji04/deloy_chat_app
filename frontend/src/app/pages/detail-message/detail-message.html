@@ -1,0 +1,449 @@
+@if (id != '') {
+<div class="container">
+    <div class="detail-message-container">
+        <!-- Header -->
+        <div class="chat-header" [style]="{ 'background-color': conversation?.background?.color || '#fff' }">
+            <div class="chat-header__left">
+                <button class="back-btn" (click)="goBack()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div class="chat-info">
+                    <div class="left">
+                        <img loading="lazy" [src]="conversation.avatar" class="avatar" alt="avatar group">
+                    </div>
+                    <div class="right">
+                        <h3 class="chat-title">{{conversation.name}}</h3>
+                        <p class="chat-subtitle">{{ messages.length }} messages</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header__right">
+                <button [routerLink]="['/video-call', id]" target="_blank" class="call-btn menu-btn" style="margin-right: 16px;">
+                    <i class="fa-solid fa-phone"></i>
+                </button>
+                <button class="menu-btn" (click)="isShowSideBar = !isShowSideBar">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Messages Container -->
+        <div #messagesList (scroll)="onScroll()" class="messages-container" 
+            [style]="{ 'margin-bottom': file ? '110px' : '60px',
+                        'background-image': conversation?.background ? 'url(' + conversation?.background?.url + ')' : 'none',
+             }">
+            <div class="messages-list">
+                @if (loadOldMessage && messages.length !== 0) {
+                    <div style="display: flex; justify-content: center; align-items: center; background-color: #007bff; color: white; padding: 10px; border-radius: 5px;">
+                        <p><i class="pi pi-spin pi-spinner"></i>Loading messages...</p>
+                    </div>
+                }
+                @for (message of messages; track message._id) {
+                <div class="message-wrapper" [ngClass]="{'message-wrapper--own': isOwnMessage(message)}">
+                    
+                    <div class="message">
+                        <!-- Avatar (only for other users) -->
+                        @if (!isOwnMessage(message)) {
+                        <div class="message__avatar">
+                            <img loading="lazy" [src]="message.sender.avatar" [alt]="'User avatar'" />
+                        </div>
+                        }
+    
+                        <!-- Message Content -->
+                        <div class="message__content">
+                            @if (!isOwnMessage(message)) {
+                            <div class="message__sender">
+                                <p>{{message.sender.username}}</p>
+                            </div>
+                            }
+                            <div class="message__container">
+                                <!-- Text Message -->
+                                @if (message.content.type === 'text') {
+                                <div class="message__bubble message__bubble--text"
+                                    [ngClass]="{'message__bubble--media': message.replyTo, 'message__bubble--other': !isOwnMessage(message)}"
+                                >
+                                    @if (message.replyTo) {
+                                        <div class="message__reply" >
+                                            <p class="message__reply--text">{{ message.replyTo.content.text }}</p>
+                                        </div>
+                                    }
+                                    <p class="message__text">{{ message.content.text }}</p>
+                                </div>
+                                }
+                                <!-- Image Message -->
+                                @else if (message.content.type === 'image') {
+                                <div class="message__bubble message__bubble--media">
+                                    <img loading="lazy" [src]="message.content.media.url" alt="Shared image" class="message__image"
+                                        (click)="openImageModal(message.content.media.url)" />
+                                    @if(message.content.text) {
+                                    <p class="message__text">{{ message.content.text }}</p>
+                                    }
+                                </div>
+                                }
+                                <!-- Video Message -->
+                                @else if (message.content.type === 'video') {
+                                <div class="message__bubble message__bubble--media">
+                                    <video [src]="message.content.media.url" controls class="message__video">
+                                    </video>
+                                    @if(message.content.text) {
+                                    <p class="message__text">{{ message.content.text }}</p>
+                                    }
+                                </div>
+                                }
+                                <!-- File Message -->
+                                @else if (message.content.type === 'file') {
+                                <div class="message__bubble message__bubble--file">
+                                    <div class="file-info">
+                                        <i class="fa-solid fa-file"></i>
+                                        <span>{{ message.content.fileName || 'File' }}</span>
+                                    </div>
+                                    @if(message.content.text) {
+                                    <p class="message__text">{{ message.content.text }}</p>
+                                    }
+                                </div>
+                                }
+                                <!-- audio Message -->
+                                @else if (message.content.type === 'audio') {
+                                <div class="message__bubble message__bubble--media">
+                                    <audio controls class="message__audio">
+                                        <source [src]="message.content.media.url" type="audio/mpeg" />
+                                        Trình duyệt của bạn không hỗ trợ audio.
+                                    </audio>
+                                    @if(message.content.text) {
+                                    <p class="message__text">{{ message.content.text }}</p>
+                                    }
+                                </div>
+                                }
+
+                                @if (!isOwnMessage(message)) {
+                                    <div class="forward" (click)="setReplyToMessage(message)">
+                                        <i class="fa-solid fa-share"></i>
+                                    </div>
+                                }
+                            </div>
+    
+                            <!-- Message Status & Time -->
+                            <div class="message__meta">
+                                <span class="message__time">{{ message.createdAt | date: 'hh:mm' }}</span>
+                                @if (isOwnMessage(message)) {
+                                <div class="message__status">
+                                    @if (message.readBy.length === 0) {
+                                    <i class="fa-solid fa-check"></i>
+                                    }
+                                    @else if (message.readBy.length === 1) {
+                                    <i class="fa-solid fa-check-double"></i>
+                                    }
+                                </div>
+                                }
+                                @if (message.edited.isEdited) {
+                                <span class="message__edited">(edited)</span>
+                                }
+                            </div>
+    
+                            <!-- Reactions -->
+                            @if (message.reactions.length > 0) {
+                            <div class="message__reactions">
+                                @for(reaction of message.reactions; track reaction.emoji) {
+                                <span class="reaction">
+                                    {{ reaction.emoji }} {{ reaction.count }}
+                                </span>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                } @empty {
+                <div class="no-message">
+                    <h2>No messages</h2>
+                </div>
+                }
+                <div id="bottom"></div>
+            </div>
+            <button *ngIf="isShowScrollBottom" class="scroll-to-bottom" (click)="scrollToBottom()">
+                <i class="fa-solid fa-angle-down"></i>
+            </button>
+        </div>
+    
+        <!-- Message Input -->
+        <div class="message-input-container" [style]="{ 'background-color': conversation?.background?.color || '#fff' }">
+            <div class="message-input">
+                <button class="attach-btn" clickOutSide (appClickOutside)="isShowOptionMedia = false">
+                    <i class="fa-solid fa-paperclip" (click)="isShowOptionMedia=!isShowOptionMedia"></i>
+                    @if (isShowOptionMedia) {
+                    <ul class="media-options">
+                        <li>
+                            <label for="image">
+                                <i class="fa-solid fa-image"></i> Image
+                            </label>
+                            <input hidden type="file" id="image" name="image" (change)="onFileSelected($event, 'image')"
+                                accept="image/*" class="avatar__input">
+                        </li>
+                        <li>
+                            <label for="video">
+                                <i class="fa-solid fa-video"></i> Video
+                            </label>
+                            <input hidden type="file" id="video" name="video" (change)="onFileSelected($event, 'video')"
+                                accept="video/*" class="avatar__input">
+                        </li>
+                        <li>
+                            <label for="audio">
+                                <i class="fa-solid fa-microphone"></i> Audio
+                            </label>
+                            <input hidden type="file" id="audio" name="audio" (change)="onFileSelected($event, 'audio')"
+                                accept="audio/*" class="avatar__input">
+                        </li>
+                    </ul>
+                    }
+                </button>
+                <div class="message-input-box">
+                    @if (file) {
+                    <div class="file-preview">
+                        <p class="file-name">
+                            {{file.name}}
+                        </p>
+                        @if (isUploading) {
+                            <p-badge class="p-fileupload-file-badge p-badge p-badge-warn p-component" value="Pending"></p-badge>
+                        }
+                        <button (click)="deleteOldImage()" class="remove-file-btn">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    }
+                    @if(replyToMessage) {
+                        <div class="file-preview">
+                            <p class="file-name">{{replyToMessage}}</p>
+                            <button class="remove-file-btn" (click)="replyToMessage=''">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    }
+                    <textarea #inputText type="text" placeholder="Type a message..." class="input-field" [(ngModel)]="newMessageText"
+                        (keyup.enter)="sendMessage()"></textarea>
+                </div>
+                <button class="send-btn" (click)="sendMessage()" >
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- side bar -->
+     @if (isShowSideBar) {
+        <div class="side-bar">
+            <div class="header">
+                <div class="pagination">
+                    <button class="pagination__btn" (click)="isShowSideBar = !isShowSideBar">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                </div>
+                <div class="info">
+                    <div class="info__avatar">
+                        @if (conversation.type === 'group' && isUploadAvatarGroup) {
+                            <div class="overlay" (click)="toggleUploadAvatarGroup($event)">
+                                <div class="modal__change-avatar">
+                                    <label class="avatar-label" for="file_avatar">
+                                        <img loading="lazy" #avatar class="avatar" [src]="conversation.avatar" alt="avatar group">
+                                        <i class="fa-solid fa-camera"></i>
+                                    </label>
+                                    <input type="file" hidden id="file_avatar" (change)="onFileGroupSelected($event)" accept="image/*">
+                                    <button class="primary-btn" [disabled]="!fileAvatarGroup" (click)="uploadAvatarGroup()">Upload</button>
+                                </div>
+                            </div>
+                        }
+                        <img loading="lazy" class="avatar" [src]="conversation.avatar" alt="avatar group" (click)="isUploadAvatarGroup = true">
+                    </div>
+                    <div>
+                        <h1>{{conversation.name}}</h1>
+                        <p>{{conversation.description}}</p>
+                    </div>
+                </div>
+                <div class="options">
+                    @if (conversation.type === 'group') {
+                        <div class="options__group add-member">
+                            <button (click)="showDialogAddMember()">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </button>
+                            <p>Add</p>
+                        </div>
+
+                        <p-dialog 
+                            class="add-member-dialog" 
+                            draggable="false" 
+                            resizable="false" 
+                            header="Add Member" 
+                            [modal]="true" 
+                            [(visible)]="isShowAddMember" 
+                            [style]="{ width: '25rem' }"
+                            [appendTo]="'body'"
+                            [maskStyleClass]="'add-member-mask'"
+                            >
+                            <span style="font-weight: bold" class="p-text-secondary block mb-8">
+                                Type email and press enter or click "Add" button to add member to group
+                            </span>
+                            <div class="add-member-input-box flex items-center gap-4 mb-2">
+                                <label for="email" class="font-semibold w-24">Email</label>
+                                <input 
+                                #addUserInput 
+                                (keydown)="searchAndAddMemberById($event)" 
+                                pInputText 
+                                id="email" 
+                                class="flex-auto" 
+                                autocomplete="off" 
+                                />
+                                <p-button 
+                                (onClick)="searchUserById(addUserInput.value)" 
+                                label="Add" 
+                                [text]="true" 
+                                severity="secondary"
+                                />
+                            </div>
+                            <ul class="list-member-add">
+                                @for (member of listMemberAddToGroup; track member._id; let idx = $index) {
+                                <li class="member">
+                                    <div class="user">
+                                    <img loading="lazy" [src]="member?.avatar" alt="avatar user" class="avatar">
+                                    <h3 class="user-name">{{member?.firstName}} {{member?.lastName}}</h3>
+                                    </div>
+                                    <button>
+                                    <i class="fa-solid fa-xmark" (click)="removeMemberFromListAddToGroup(idx)"></i>
+                                    </button>
+                                </li>
+                                }
+                            </ul>
+                            <ng-template pTemplate="footer">
+                                <p-button 
+                                label="Cancel" 
+                                [text]="true" 
+                                severity="secondary" 
+                                (click)="isShowAddMember = false" 
+                                />
+                                <p-button 
+                                label="Save" 
+                                [outlined]="true" 
+                                severity="secondary" 
+                                (click)="saveMemberToGroup()" 
+                                />
+                            </ng-template>
+                            </p-dialog>
+                    }
+                </div>
+            </div>
+            <div class="body">
+                @if (conversation.type === 'group') {
+                    <div class="body__option member">
+                        <div class="title cursor" (click)="isShowMember = !isShowMember">
+                            <p>Members in group </p>
+                            <i class="fa-solid fa-chevron-right" [ngClass]="{'isShow': isShowMember}"></i>
+                        </div>
+                        <div class="member__list list" [ngClass]="{'show': isShowMember, 'close': isShowMember == false}">
+                            @for(member of conversation.participants; track member._id) {
+                                <div class="member__item item">
+                                    <div class="left">
+                                        <img loading="lazy" class="avatar" [src]="member.avatar" alt="avatar" >
+                                        @if (member._id === conversation.admin) {
+                                            <i style="color: rgb(150, 150, 38);" class="fas fa-crown"></i>
+                                        } @else if (conversation.moderators.includes(member._id)) {
+                                            <i class="fas fa-gavel"></i>
+                                        }
+                                        <p>{{member.username}}</p>
+                                    </div>
+                                    @if (checkPermissionToShowOption() && conversation.admin !== member._id) {
+                                         <div class="right cursor" (click)="setUserIdShowOption(member._id)">
+                                            <i class="fa-solid fa-ellipsis"></i>
+                                        </div>
+                                        @if (userIdShowOption === member._id) {
+                                            <ul class="options">
+                                                <li>
+                                                    <button (click)="upgradeUserToModerator(member._id)">Make Moderator</button>
+                                                </li>
+                                                <li>
+                                                    <button (click)="downgradeModeratorToRegularUser(member._id)">Make Regular User</button>
+                                                </li>
+                                                @if (conversation.moderators.includes(currentUserId) || conversation.admin !== member._id) {
+                                                    <li class="remove ">
+                                                        <button class="delete" (click)="removeUserConfirm($event, member)">Remove</button>
+                                                    </li>
+                                                }
+                                                @else {
+                                                    <li class="transfer-admin">
+                                                        <button class="delete" disabled>No Options For Yourself</button>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                <div class="body__option media">
+                    <div class="title cursor" (click)="getMediaInConversation()">
+                        <p>Media in group</p>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                    @if (!loadingInOption) {
+                        <div class="media__list list" [ngClass]="{'show': isShowMedia, 'close': isShowMedia == false, 'empty': listMedia.length === 0}">
+                            @for(item of listMedia; track item._id) {
+                                <div class="media__item item cursor">
+                                    @if (item.content.type === 'image') {
+                                        <img loading="lazy" class="media__item--image" [src]="item.content.media.url" alt="media" (click)="openImageModal(item.content.media.url)">
+                                    } @else if (item.content.type === 'video') {
+                                        <video [poster]="item.content.media.thumbnail"
+                                            [src]="item.content.media.url" class="media__item--video"
+                                            (click)="openImageModal(item.content.media.url)"
+                                            >
+                                        </video>
+                                    }
+                                </div>
+                            } @empty {
+                                <div class="no-media">
+                                    <p>
+                                        <i class="pi pi-inbox"></i>
+                                        No media found
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="loading">
+                            <p style="display: flex; justify-content: center; align-items: center;">
+                                <i class="pi pi-spin pi-spinner"></i>
+                                Loading...
+                            </p>
+                        </div>
+                    }
+                </div>
+                <app-background-conversation (changeBackgroundEvent)="changeBackground($event)"></app-background-conversation>
+                <div class="body__option">
+                    @if (conversation.type === 'group') {
+                        @if (conversation.admin === currentUserId) {
+                        <button (click)="deleteGroupConfirm($event)" class="alert alert-error cursor">
+                            delete group
+                        </button>
+                        }
+                        <button (click)="leaveGroupConfirm($event)" class="alert alert-error cursor">
+                            leave group
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+}
+
+@else if (id != '' && messages.length === 0) {
+<div class="no-message">
+    <h2><i class="pi pi-spin pi-spinner"></i>Loading</h2>
+</div>
+}
+
+@else {
+<div class="hello-page">
+    <app-home></app-home>
+</div>
+}
+<p-confirmdialog />
+
+<app-modal-image [show]="isShowDialogImage" [url]="currentImageUrl" (close)="isShowDialogImage = false"></app-modal-image>

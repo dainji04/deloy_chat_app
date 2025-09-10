@@ -1,0 +1,101 @@
+<div class="friends">
+    <form class="form" [formGroup]="formFilterAndSearch">
+        <div class="form__search">
+            <input name="search" type="text" placeholder="Search friends..." formControlName="searchTerms" />
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <!-- <div class="form__filter">
+            <select name="" id="filter">
+                <option value="" disabled selected>--Select filter</option>
+                <option value="">A to Z</option>
+                <option value="">Z to A</option>
+                <option value="">Recently Added</option>
+            </select>
+        </div> -->
+    </form>
+
+    <div class="friends__main">
+        <div class="group-btn">
+            <button class="group-btn__all-friends btn" (click)="getAll()">All Friends</button>
+            <button class="group-btn__friend-requests btn" (click)="getFriendRequests()">Friend Requests</button>
+            <button class="group-btn__friend-rcm btn" (click)="getFriendRecommendations()">
+                Friend Recommendations
+            </button>
+        </div>
+
+        <div class="friends__length">
+            <h1>{{ listFriends?.length || 0 }} Friends</h1>
+        </div>
+        @if (listFriends) {
+            <div class="friends__list">
+                @for (friend of listFriends; let idx = $index; track friend._id) {
+                    <div class="friends__list-item">
+                        <div class="user">
+                            <div class="status">
+                                <img loading="lazy" [src]="friend?.avatar" alt="{{ friend?.username }} avatar" class="avatar">
+                                <i [ngClass]="{'online': friend?.isOnline, 'offline': !friend?.isOnline}"
+                                    class="dot fa-solid fa-circle"></i>
+                            </div>
+                            <span>{{ friend?.firstName + ' ' + friend?.lastName }}</span>
+                        </div>
+
+                        <div class="options-wrapper">
+                            @if (typeOfList === 'all') {
+                                <button class="options-btn" (click)="showOptions(friend._id)">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                @if(isUserShowOptions === friend._id) {
+                                <ul appClickOutside (appClickOutside)="closeOptions()" class="options"
+                                    [ngClass]="{'show': isUserShowOptions === friend._id}">
+                                    <li>
+                                        <button (click)="getOrCreateConversation(friend._id)">
+                                            Chat with {{friend?.username}}
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button (click)="unFriend(friend._id)" class="delete">
+                                            Unfriend with {{friend?.username}}
+                                        </button>
+                                    </li>
+                                </ul>
+                                }
+                            }
+                            @else if (typeOfList === 'requests') {
+                                <button class="accept-btn friend-btn" (click)="acceptRequest(friend._id)">
+                                    accept
+                                </button>
+                            }
+                            @else if (typeOfList === 'recommendations') {
+                                <button class="add-btn friend-btn">
+                                    add
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        <!-- show loading in the first time -->
+        @if(!listFriends) {
+            <p><i class="pi pi-spin pi-spinner"></i>Loading friends...</p>
+        }
+        <!-- show no friends when list empty and not searching -->
+        @else if ((listFriends == undefined || listFriends.length === 0 && !isSearching)) {
+            @switch (typeOfList) {
+                @case ('all') {
+                    <p>No friends.</p>
+                }
+                @case ('requests') {
+                    <p>No friend requests.</p>
+                }
+                @case ('recommendations') {
+                    <p>No friend recommendations.</p>
+                }
+            }
+        }
+        <!-- show not found searching -->
+        @else if (isSearching && listFriends.length === 0) {
+            <p>No friends found.</p>
+        }
+    </div>
+</div>

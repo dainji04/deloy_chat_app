@@ -1,0 +1,17 @@
+@use "variables" as *;
+
+.primary-btn {
+    width: 100%;
+    padding: 12px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+
+    &:disabled {
+        background-color: lighten($primary-color, 20%);
+        cursor: not-allowed;
+    }
+}
